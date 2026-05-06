@@ -506,27 +506,37 @@ A comparação entre as duas abordagens será realizada com base nas seguintes m
 
 \section{Contribuições do Trabalho}
 
-% TODO: Sintetizar as principais contribuições:
-% - Sistema Crawler AI implementado e documentado
-% - Comparação empírica formal entre abordagens de scraping
-% - Evidências sobre quando usar LLM vs tradicional
-% - Código-fonte disponível como referência
+Este trabalho apresenta contribuições em duas frentes complementares: uma de natureza prática, relativa ao sistema desenvolvido, e outra de natureza científica, relativa à avaliação empírica das abordagens comparadas.
+
+No âmbito prático, o sistema Crawler AI constitui uma implementação funcional de um pipeline de extração de dados via LLM integrado a uma interface web completa. A arquitetura assíncrona baseada em filas de mensagens, o pipeline de três estágios com estratégia de \textit{fetch} em dois níveis e o uso de saída estruturada via JSON mode da API da OpenAI compõem uma solução de referência para desenvolvedores que busquem implementar scrapers baseados em modelos de linguagem. O código-fonte do sistema está disponível como referência para trabalhos futuros.
+
+No âmbito científico, o trabalho oferece uma comparação empírica formal entre a abordagem de scraping via LLM e a abordagem tradicional baseada em seletores CSS e XPath, conduzida com metodologia de avaliação rigorosa e métricas objetivas sobre um conjunto controlado de páginas web. Essa análise preenche uma lacuna identificada na literatura, onde comparações formais e revisadas entre as duas abordagens são inexistentes. Os resultados produzidos fornecem evidências concretas sobre os cenários em que cada abordagem apresenta vantagens, contribuindo com subsídios técnicos para decisões de engenharia de software em projetos que demandam extração automatizada de dados da web.
 
 \section{Limitações}
 
-% TODO: Discutir limitações reconhecidas:
-% - Número limitado de sites testados
-% - Dependência de API externa (OpenAI) sujeita a mudanças de preço
-% - Comparação realizada em um momento específico (sites mudam)
-% - Não avaliação de outros LLMs (Claude, Gemini, etc.)
+O presente trabalho reconhece um conjunto de limitações que devem ser consideradas na interpretação dos resultados e na extrapolação das conclusões.
+
+A primeira limitação é o escopo reduzido do conjunto de avaliação. Com quinze URLs distribuídas em três categorias, a amostra é suficiente para uma análise exploratória e para a identificação de tendências, mas insuficiente para conclusões estatisticamente robustas sobre a população geral de páginas web. Páginas com características atípicas — proteções antibot agressivas, estruturas de DOM altamente aninhadas ou conteúdo majoritariamente em imagens — não foram contempladas nos experimentos.
+
+A segunda limitação diz respeito à dependência de um único provedor de modelo de linguagem. O sistema Crawler AI e os experimentos foram desenvolvidos exclusivamente com o modelo GPT-4o mini da OpenAI. Outros modelos — como o Claude da Anthropic, o Gemini do Google ou modelos de código aberto como o Llama — podem apresentar desempenho substancialmente diferente na tarefa de extração estruturada, tanto em acurácia quanto em custo e latência. Os resultados obtidos não permitem generalização para outros LLMs.
+
+A terceira limitação é a natureza efêmera das páginas web. Os experimentos foram realizados em um período específico, e os sites avaliados podem ter alterado seu layout ou conteúdo subsequentemente. Isso significa que os resultados do módulo \textit{baseline} — que depende de seletores acoplados à estrutura da página — não são necessariamente reproduzíveis em avaliações futuras sobre as mesmas URLs.
+
+Por fim, a métrica de esforço de implementação é avaliada de forma qualitativa, o que introduz subjetividade na comparação. Uma mensuração mais rigorosa dessa dimensão — por exemplo, por meio do registro do tempo efetivo gasto na definição dos seletores — ficou fora do escopo deste trabalho, mas seria relevante em estudos futuros.
 
 \section{Trabalhos Futuros}
 
-% TODO: Propor extensões ao trabalho:
-% - Suporte a múltiplos provedores de LLM (Claude, Gemini, modelos locais como Llama)
-% - Avaliação de técnicas de fine-tuning para a tarefa de extração
-% - Desenvolvimento de um benchmark público para comparação de scrapers
-% - Sistema de detecção automática da melhor abordagem por tipo de página
+A partir das limitações identificadas e dos resultados obtidos, propõem-se as seguintes direções para trabalhos futuros.
+
+A extensão mais direta é a ampliação do escopo de avaliação. Um estudo com centenas de URLs, distribuídas em categorias mais granulares e incluindo páginas em múltiplos idiomas, proporcionaria evidências estatisticamente mais robustas sobre o desempenho comparativo das abordagens. A publicação do conjunto de dados utilizado como \textit{benchmark} aberto permitiria que outros pesquisadores replicassem e estendessem os experimentos com diferentes modelos e ferramentas.
+
+Uma segunda direção relevante é a avaliação de múltiplos provedores de LLM. A inclusão de modelos como o Claude da Anthropic, o Gemini do Google e modelos de código aberto executados localmente — como o Llama e o Mistral — permitiria mapear o \textit{trade-off} entre custo, latência e acurácia em um espectro mais amplo de opções, orientando a escolha de modelo conforme o perfil da aplicação.
+
+Outra extensão de interesse é a investigação do ajuste fino (\textit{fine-tuning}) de modelos menores para a tarefa específica de extração de dados de páginas web. Modelos ajustados com exemplos de extração poderiam oferecer desempenho comparável ao GPT-4o mini com custo e latência significativamente reduzidos, tornando a abordagem LLM economicamente viável para volumes maiores.
+
+No plano sistêmico, uma contribuição relevante seria o desenvolvimento de um módulo de roteamento adaptativo que, com base em características da página — como presença de JavaScript, tamanho do DOM e tipo de dado solicitado —, selecione automaticamente a abordagem mais adequada para cada extração. Esse sistema híbrido combinaria a eficiência de custo do scraping tradicional com a resiliência semântica dos LLMs, aplicando cada abordagem nos cenários em que demonstra vantagem.
+
+Por fim, a incorporação de suporte a conteúdo multimídia — como a extração de dados presentes em imagens ou documentos PDF embutidos nas páginas — representaria uma extensão significativa das capacidades do sistema, explorando as aptidões multimodais dos modelos de linguagem mais recentes.
 
 \bibliographystyle{abnt}
 \bibliography{bibliografia}
