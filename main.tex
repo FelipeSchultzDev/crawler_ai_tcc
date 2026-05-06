@@ -167,60 +167,138 @@ Implementar o sistema Crawler AI, uma aplicação de web scraping baseada em Mod
 
 \section{Web Scraping: Conceito e Evolução}
 
-% TODO: Escrever ~400 palavras cobrindo:
-% - Definição de web scraping
-% - Histórico: primeiros crawlers (anos 90), evolução com AJAX, SPAs
-% - Casos de uso: pesquisa acadêmica, monitoramento, BI, ML datasets
-% - Aspectos legais e éticos (robots.txt, termos de uso)
-% Referências sugeridas: Mitchell2018, GlezPena2014
+O termo \textit{web scraping} — também referido como \textit{web harvesting} ou \textit{web data extraction} — designa o conjunto de técnicas e ferramentas utilizadas para coletar, de forma automatizada, informações disponíveis em páginas da internet \cite{Mitchell2018}. Em sua essência, o processo consiste em simular o acesso de um cliente HTTP a um servidor web, obter o conteúdo retornado — tipicamente em formato HTML — e aplicar algum mecanismo de análise sintática (\textit{parsing}) para localizar e extrair os dados de interesse, que são então armazenados em um formato estruturado, como CSV, JSON ou banco de dados relacional.
+
+As origens dessa prática remontam à própria fundação da web. Com a especificação do protocolo HTTP em 1991 e o surgimento dos primeiros navegadores, vieram também os primeiros programas de varredura automatizada. O \textit{World Wide Web Wanderer}, desenvolvido em 1993, é considerado um dos primeiros \textit{web crawlers} da história, criado inicialmente para medir o crescimento da web \cite{Mitchell2018}. Ao longo dos anos 1990, mecanismos de busca como o AltaVista e, posteriormente, o Google consolidaram a prática do rastreamento automático de páginas como fundamento de sua infraestrutura, impulsionando o desenvolvimento de tecnologias de coleta em larga escala.
+
+A partir do início dos anos 2000, o advento das tecnologias AJAX (\textit{Asynchronous JavaScript and XML}) introduziu uma camada adicional de complexidade. Com o AJAX, partes das páginas passaram a ser carregadas dinamicamente, sem que o usuário precisasse recarregar o documento inteiro. Isso significou que o conteúdo exibido no navegador não estava mais necessariamente presente no HTML retornado pela requisição HTTP inicial, tornando obsoletas as abordagens puramente baseadas em análise estática de HTML \cite{GlezPena2014}. A proliferação posterior das Aplicações de Página Única (SPAs) — construídas com frameworks como Angular, React e Vue — intensificou esse fenômeno: nesses sistemas, o HTML inicial entregue pelo servidor pode ser um documento quase vazio, com todo o conteúdo sendo gerado pelo JavaScript no navegador do cliente.
+
+As aplicações práticas do web scraping são vastas e abrangem domínios distintos. No contexto empresarial, destacam-se o monitoramento de preços em plataformas de comércio eletrônico, a geração de \textit{leads} de vendas, a análise competitiva de mercado e a agregação de notícias. No âmbito acadêmico e científico, a técnica é amplamente utilizada para a construção de conjuntos de dados para treinamento de modelos de aprendizado de máquina, análise de sentimentos em redes sociais e estudos sobre o comportamento da web \cite{Mitchell2018}. Sistemas governamentais e o jornalismo de dados também se valem do scraping para extrair informações de portais públicos que não oferecem interfaces de programação estruturadas.
+
+Apesar de sua utilidade, o web scraping opera em um espaço de tensão legal e ética que deve ser considerado. Muitos sites publicam o arquivo \texttt{robots.txt}, um padrão de exclusão que sinaliza quais partes do site não devem ser acessadas por agentes automatizados. Os termos de uso de serviços online também frequentemente proíbem a coleta automatizada de dados sem autorização prévia. Do ponto de vista jurídico, a questão permanece em constante evolução: decisões em diferentes jurisdições já reconheceram tanto a legalidade quanto a ilegalidade de determinadas práticas de scraping, a depender do contexto e da natureza dos dados coletados \cite{GlezPena2014}. Regulamentações de proteção de dados pessoais — como o GDPR europeu e a LGPD brasileira — adicionam outra camada de complexidade ao uso responsável da técnica.
 
 \section{Abordagens Tradicionais de Web Scraping}
 
-% TODO: Escrever ~600 palavras cobrindo:
-% - Parsing de HTML com BeautifulSoup e lxml
-% - Seletores CSS e expressões XPath: sintaxe e uso
-% - Frameworks completos: Scrapy (arquitetura de spider)
-% - Automação de navegador: Selenium, Playwright (motivação: SPAs e JS)
-% - Vantagens: controle total, sem custo de API, determinístico
-% - Desvantagens: fragilidade a mudanças de estrutura, alto custo de manutenção
-% Referências sugeridas: Mitchell2018, GlezPena2014, Playwright2024, BeautifulSoup2024
+As abordagens tradicionais de web scraping podem ser agrupadas em duas grandes categorias: aquelas baseadas em análise estática do HTML — adequadas para páginas cujo conteúdo é servido diretamente pelo servidor — e aquelas baseadas em automação de navegador real — necessárias quando o conteúdo é gerado dinamicamente por JavaScript. Em ambos os casos, o princípio fundamental é o mesmo: identificar, por meio de regras estruturais, a localização dos dados desejados no documento e extraí-los de forma determinística.
+
+\subsection*{Seletores CSS e Expressões XPath}
+
+A forma mais direta de extrair informações de uma página web consiste em analisar o documento HTML retornado pela requisição HTTP e localizar os elementos de interesse por meio de seletores. Dois mecanismos complementares são amplamente utilizados para essa finalidade: os seletores CSS e as expressões XPath.
+
+Os seletores CSS, originalmente concebidos para a aplicação de estilos a elementos HTML, foram adotados pela comunidade de scrapers por sua sintaxe concisa e expressiva. Por meio deles, é possível identificar elementos com base em seu tipo (\texttt{h1}, \texttt{p}, \texttt{table}), classe (\texttt{.price}), identificador (\texttt{\#product-title}) ou combinações dessas propriedades \cite{Mitchell2018}. As expressões XPath, por sua vez, constituem uma linguagem de consulta para documentos XML e HTML que permite a navegação pela árvore do documento, oferecendo maior flexibilidade em cenários complexos, como selecionar um elemento com base no conteúdo textual de um nó adjacente.
+
+\subsection*{BeautifulSoup}
+
+A biblioteca BeautifulSoup é a ferramenta de análise de HTML mais amplamente utilizada no ecossistema Python \cite{BeautifulSoup2024}. Ela abstrai a complexidade do parsing de HTML — incluindo o tratamento de documentos mal-formados — e oferece uma API de alto nível para navegação e busca na árvore de elementos. Tipicamente utilizada em conjunto com o parser \texttt{lxml}, que oferece desempenho superior por ser implementado em C, a biblioteca permite localizar elementos via seletores CSS ou expressões XPath com poucas linhas de código.
+
+Sua principal vantagem é a simplicidade: para casos diretos, um extrator funcional pode ser escrito em menos de dez linhas. Como contrapartida, o BeautifulSoup não realiza requisições HTTP — dependendo de bibliotecas como \texttt{requests} para obter o HTML —, não gerencia filas de URLs nem lida com conteúdo renderizado por JavaScript. Para cenários mais complexos, faz-se necessário o uso de frameworks ou ferramentas adicionais.
+
+\subsection*{Scrapy}
+
+O Scrapy é um framework de web crawling e scraping completo, desenvolvido para cenários de coleta em média e larga escala \cite{Scrapy2024}. Sua arquitetura é baseada no conceito de \textit{spiders} — classes que definem as regras de navegação e extração para um determinado site — e em um pipeline de processamento assíncrono que gerencia o ciclo de vida das requisições, o controle de concorrência, o respeito a limites de taxa (\textit{rate limiting}) e o armazenamento dos dados coletados. O Scrapy oferece recursos nativos como suporte a \textit{middlewares}, integração com proxies, manipulação de \textit{cookies} e mecanismos de cache de requisições, tornando-o adequado para projetos de coleta contínua e profissional.
+
+\subsection*{Automação de Navegador: Selenium e Playwright}
+
+Para páginas cujo conteúdo é renderizado dinamicamente via JavaScript — como SPAs construídas com React, Angular ou Vue —, a análise estática de HTML é insuficiente, uma vez que o documento retornado pelo servidor não contém os dados finais exibidos ao usuário. A solução adotada pela comunidade é a automação de navegadores completos. O Selenium, lançado em 2004, foi o pioneiro nessa abordagem, permitindo o controle programático de navegadores como Chrome e Firefox. O Playwright, desenvolvido pela Microsoft e lançado em 2020, representa a evolução mais recente desse paradigma, oferecendo suporte nativo a múltiplos navegadores (Chromium, Firefox e WebKit), API assíncrona e mecanismos avançados de espera por elementos \cite{Playwright2024}.
+
+\subsection*{Vantagens e Limitações}
+
+As abordagens tradicionais apresentam vantagens significativas: são determinísticas, não incorrem em custos de API, oferecem controle total sobre o processo de extração e podem ser executadas inteiramente em infraestrutura local. No entanto, compartilham uma limitação estrutural fundamental: os seletores e regras de extração são intimamente acoplados à estrutura do HTML do site alvo. Qualquer alteração no layout — renomeação de classes CSS, reestruturação do DOM ou modificação na hierarquia de elementos — invalida imediatamente os seletores definidos, exigindo intervenção manual para restaurar o funcionamento do coletor \cite{GlezPena2014}. Em ambientes de produção onde múltiplos sites são monitorados continuamente, esse custo de manutenção pode se tornar o principal gargalo operacional.
 
 \section{Modelos de Linguagem de Grande Escala}
 
-% TODO: Escrever ~600 palavras cobrindo:
-% - Definição de LLM
-% - Arquitetura Transformer (Vaswani et al., 2017): mecanismo de atenção
-% - Pré-treinamento e fine-tuning: GPT, BERT e variantes
-% - GPT-3 (Brown et al., 2020) e GPT-4 (OpenAI, 2023): capacidades emergentes
-% - Conceito de tokens, context window e custo por uso
-% Referências sugeridas: Vaswani2017, Brown2020, OpenAI2023, Zhao2023
+Os Modelos de Linguagem de Grande Escala (LLMs, do inglês \textit{Large Language Models}) são sistemas de inteligência artificial treinados sobre conjuntos de dados textuais de escala massiva, com o objetivo de aprender representações estatísticas da linguagem humana. A partir dessas representações, os modelos tornam-se capazes de realizar uma ampla variedade de tarefas linguísticas — tradução, sumarização, resposta a perguntas, geração de código e extração de informações — sem que sejam especificamente treinados para cada uma delas \cite{Zhao2023}. Essa generalidade emergente é o traço mais distintivo dos LLMs em relação às abordagens anteriores de Processamento de Linguagem Natural (PLN).
+
+\subsection*{Arquitetura Transformer}
+
+O fundamento técnico dos LLMs modernos é a arquitetura \textit{Transformer}, proposta por \citeauthor{Vaswani2017} no artigo seminal \textit{Attention is All You Need} \cite{Vaswani2017}. Antes do Transformer, os modelos dominantes de PLN eram baseados em redes neurais recorrentes (RNNs), que processavam sequências de texto elemento por elemento, de forma serial. Essa abordagem apresentava dificuldades para capturar dependências de longo alcance e não se prestava à paralelização eficiente durante o treinamento.
+
+O Transformer superou essas limitações ao introduzir o mecanismo de \textit{atenção} (\textit{self-attention}), que permite ao modelo calcular, de forma paralela, o grau de relevância de cada token em relação a todos os demais tokens da sequência. O resultado é uma representação contextualizada de cada elemento que leva em conta o significado de toda a sequência — e não apenas do contexto imediato \cite{Vaswani2017}. Essa propriedade é fundamental para tarefas que exigem compreensão de relações semânticas de longo alcance, como a extração de entidades distribuídas ao longo de um documento extenso.
+
+\subsection*{Pré-treinamento e Ajuste Fino}
+
+O paradigma dominante de desenvolvimento dos LLMs é o pré-treinamento em larga escala seguido de ajuste fino (\textit{fine-tuning}). Na fase de pré-treinamento, o modelo é exposto a quantidades massivas de texto — livros, artigos, código-fonte, páginas web — e treinado a prever o próximo token em uma sequência. Esse processo induz no modelo uma representação rica do conhecimento linguístico e factual presente nos dados \cite{Brown2020}.
+
+Na fase de ajuste fino, o modelo pré-treinado é adaptado para um comportamento mais específico e alinhado às intenções do usuário, por meio de técnicas como o Aprendizado por Reforço com Feedback Humano (RLHF, do inglês \textit{Reinforcement Learning from Human Feedback}). O modelo BERT (\textit{Bidirectional Encoder Representations from Transformers}), proposto pelo Google em 2018, exemplifica o paradigma encoder, otimizado para tarefas de compreensão. A família GPT (\textit{Generative Pre-trained Transformer}), da OpenAI, adota a arquitetura decoder, otimizada para geração de texto.
+
+\subsection*{GPT-3, GPT-4 e Capacidades Emergentes}
+
+O GPT-3, apresentado por \citeauthor{Brown2020} em 2020, marcou um ponto de inflexão na área ao demonstrar que modelos com 175 bilhões de parâmetros exibem capacidades notáveis de aprendizado \textit{few-shot}: ao receber apenas alguns exemplos de uma tarefa no prompt, o modelo é capaz de generalizá-la sem qualquer atualização de pesos \cite{Brown2020}. Esse comportamento emergente — não previsto como objetivo de treinamento explícito — revelou que o aumento de escala induz capacidades qualitativamente novas.
+
+O GPT-4, descrito no relatório técnico da OpenAI, avançou essa fronteira com melhorias substanciais em raciocínio, seguimento de instruções complexas e redução de alucinações \cite{OpenAI2023}. Sua variante otimizada para uso via API, o GPT-4o mini, combina desempenho competitivo com custo operacional reduzido — sendo a escolha adotada no sistema Crawler AI descrito neste trabalho.
+
+\subsection*{Tokens, Janela de Contexto e Custo}
+
+O conceito de \textit{token} é central para o entendimento operacional dos LLMs. Um token não corresponde necessariamente a uma palavra inteira: pode ser um fragmento de palavra, um sinal de pontuação ou um espaço. Em inglês, uma palavra equivale em média a 1,3 tokens; em português, essa proporção tende a ser ligeiramente superior, dada a morfologia mais rica da língua \cite{Zhao2023}.
+
+A \textit{janela de contexto} (\textit{context window}) define o número máximo de tokens que o modelo pode processar em uma única chamada — abrangendo tanto o prompt de entrada quanto a resposta gerada. Modelos mais recentes apresentam janelas de contexto na ordem de dezenas a centenas de milhares de tokens, tornando-os capazes de processar documentos extensos em uma única requisição. O custo de uso via API é proporcional ao volume de tokens consumidos, calculado separadamente para tokens de entrada e de saída, e varia conforme o modelo utilizado. Esse modelo de precificação por volume é um dos principais fatores que diferenciam os LLMs das abordagens tradicionais de scraping sob o aspecto econômico.
 
 \section{LLMs para Extração de Informação Estruturada}
 
-% TODO: Escrever ~500 palavras cobrindo:
-% - Information Extraction (IE) como tarefa de NLP
-% - LLMs como extratores zero-shot e few-shot
-% - JSON mode / structured output: garantia de formato de resposta
-% - Exemplos de aplicações: extração de entidades, preenchimento de formulários, parsing de documentos
-% - Limitações: alucinação, custo, latência
-% Referências sugeridas: Brown2020, OpenAI2023, Wei2022
+A Extração de Informação (IE, do inglês \textit{Information Extraction}) é uma subárea do PLN dedicada à identificação automática de dados estruturados a partir de texto não estruturado. Tarefas clássicas de IE incluem o Reconhecimento de Entidades Nomeadas (\textit{Named Entity Recognition} — NER), a extração de relações entre entidades, o preenchimento de templates e a classificação de eventos. Historicamente, essas tarefas foram abordadas com modelos supervisionados treinados especificamente para cada domínio, exigindo conjuntos de dados rotulados e retrainamento ao mudar de contexto \cite{Brown2020}.
+
+\subsection*{LLMs como Extratores Zero-Shot e Few-Shot}
+
+A ascensão dos LLMs alterou profundamente esse panorama. Dada sua capacidade de seguir instruções em linguagem natural, os modelos da família GPT podem atuar como extratores de informação de forma \textit{zero-shot} — sem qualquer exemplo de treinamento específico para a tarefa — simplesmente a partir de uma instrução que descreve os campos desejados. Ao receber um trecho de texto e um esquema com os atributos a extrair, o modelo infere quais fragmentos correspondem a cada campo e retorna a resposta estruturada \cite{Brown2020}.
+
+Quando a qualidade da extração zero-shot não é suficiente, a abordagem \textit{few-shot} permite fornecer de um a poucos exemplos de pares entrada-saída diretamente no prompt. O modelo generaliza o padrão demonstrado para novos inputs sem necessidade de ajuste fino. Essa flexibilidade elimina a necessidade de rotulação de dados e retrainamento, reduzindo drasticamente o esforço de implantação em novos domínios.
+
+\subsection*{Saída Estruturada e JSON Mode}
+
+Uma das principais barreiras para o uso de LLMs em pipelines de dados é a natureza não determinística de suas saídas: sem restrições explícitas, o modelo pode formatar a resposta de diferentes maneiras em chamadas distintas, dificultando o parsing automatizado. Para mitigar esse problema, a API da OpenAI oferece o parâmetro \texttt{response\_format: \{type: "json\_object"\}}, que garante que a resposta do modelo seja sempre um objeto JSON sintaticamente válido \cite{OpenAI2023}. Versões mais recentes da API introduziram o conceito de \textit{structured outputs}, que permite vincular a resposta do modelo a um esquema JSON (\textit{JSON Schema}), garantindo não apenas a validade sintática mas também a conformidade com os tipos e campos especificados.
+
+Essa capacidade transforma os LLMs em extratores de dados diretamente integráveis a sistemas de software, sem necessidade de camadas adicionais de parsing ou tratamento de erros de formato. Aplicações práticas incluem a extração de especificações de produtos em páginas de e-commerce, o preenchimento automático de formulários a partir de documentos não estruturados, o parsing de artigos científicos e a estruturação de registros médicos.
+
+\subsection*{Limitações}
+
+Apesar das vantagens, o uso de LLMs para extração de informação apresenta limitações relevantes que precisam ser consideradas. A alucinação — fenômeno pelo qual o modelo gera informações factualmente incorretas com aparência de confiança — representa um risco particularmente crítico em aplicações onde a precisão dos dados é essencial \cite{OpenAI2023}. Em um contexto de extração de dados de páginas web, isso se manifesta como campos preenchidos com valores plausíveis mas ausentes no documento original.
+
+O custo por extração, proporcional ao volume de tokens, pode tornar a abordagem economicamente inviável em cenários de alto volume ou com páginas de conteúdo extenso. A latência da chamada à API — tipicamente entre um e cinco segundos por requisição — é outro fator limitante em aplicações que exigem resposta em tempo real. Por fim, a transmissão do conteúdo das páginas a servidores externos levanta questões de privacidade e conformidade em cenários que envolvem dados sensíveis, exigindo avaliação cuidadosa dos termos de uso do provedor de modelo utilizado.
 
 \section{Engenharia de Prompts}
 
-% TODO: Escrever ~400 palavras cobrindo:
-% - Definição e importância do prompt engineering
-% - Técnicas: zero-shot, few-shot, chain-of-thought (Wei et al., 2022)
-% - Impacto na qualidade da extração
-% - Boas práticas: instrução clara, exemplos de entrada/saída, restrições explícitas
-% Referências sugeridas: Wei2022, Zhao2023
+A engenharia de prompts (\textit{prompt engineering}) consiste no conjunto de técnicas voltadas à elaboração de instruções de entrada — os \textit{prompts} — que maximizam a qualidade, a precisão e a consistência das respostas de um LLM para uma tarefa específica. Uma vez que os LLMs são sistemas sensíveis à formulação da instrução recebida, pequenas variações na redação do prompt podem produzir resultados substancialmente diferentes \cite{Zhao2023}. Por esse motivo, a engenharia de prompts tornou-se uma disciplina prática relevante para qualquer aplicação baseada em modelos de linguagem, incluindo sistemas de extração de dados como o desenvolvido neste trabalho.
+
+\subsection*{Técnicas Principais}
+
+A abordagem mais simples é o \textit{zero-shot prompting}, em que a instrução descreve a tarefa diretamente, sem fornecer exemplos. Essa técnica é eficaz para tarefas bem definidas nas quais o modelo já dispõe de representações suficientes durante o pré-treinamento \cite{Brown2020}. Quando o desempenho zero-shot é insatisfatório, o \textit{few-shot prompting} consiste em inserir no prompt de um a poucos exemplos de pares entrada-saída que demonstram o comportamento desejado. O modelo infere o padrão a partir dos exemplos e aplica a mesma lógica à nova entrada, sem alteração de pesos.
+
+Uma técnica de maior impacto para tarefas que envolvem raciocínio é o \textit{chain-of-thought prompting}, proposto por \citeauthor{Wei2022}. Ao solicitar que o modelo explicite seu raciocínio intermediário — em vez de produzir diretamente a resposta final — observa-se uma melhora significativa na acurácia em tarefas complexas \cite{Wei2022}. A técnica é especialmente útil quando a extração depende de inferências sobre o conteúdo, como identificar o preço com desconto a partir de dois valores numéricos apresentados lado a lado em uma página.
+
+\subsection*{Boas Práticas para Extração de Dados}
+
+No contexto específico de extração de dados estruturados de páginas web, a literatura e a prática identificam um conjunto de boas práticas que elevam a confiabilidade dos resultados \cite{Zhao2023}:
+
+\begin{itemize}
+    \item \textbf{Instrução de papel explícita}: definir o comportamento esperado do modelo no prompt de sistema, como instruí-lo a atuar exclusivamente como um extrator de dados e não como um assistente conversacional;
+    \item \textbf{Esquema de saída declarado}: especificar os campos esperados, seus tipos e, quando pertinente, restrições de formato diretamente no prompt, reduzindo a ambiguidade da resposta;
+    \item \textbf{Restrições negativas}: instruir o modelo a não inventar dados ausentes, não seguir instruções encontradas no conteúdo da página (\textit{prompt injection}) e retornar \texttt{null} para campos não encontrados, em vez de valores aproximados;
+    \item \textbf{Contexto adicional}: fornecer informações sobre o domínio ou o tipo de página sendo processada, o que auxilia o modelo a desambiguar elementos com múltiplas interpretações possíveis.
+\end{itemize}
+
+No sistema Crawler AI, essas práticas são implementadas por meio de um prompt de sistema fixo, que estabelece o comportamento do modelo como extrator estrito, combinado com um prompt de usuário dinâmico, que inclui o esquema JSON definido pelo usuário e o contexto opcional fornecido para cada tarefa de extração.
 
 \section{Trabalhos Relacionados}
 
-% TODO: Escrever ~500 palavras cobrindo:
-% - Pesquisar e citar estudos existentes que comparam scraping tradicional e LLM
-% - Ferramentas como ScrapeGraphAI, Firecrawl, Jina AI Reader
-% - Artigos que usam LLMs para extração de dados de páginas web
-% - Lacunas na literatura que este trabalho pretende preencher
+A interseção entre LLMs e web scraping é um campo relativamente recente, e a maior parte da produção disponível ainda se encontra na forma de ferramentas de código aberto, documentações técnicas e publicações não revisadas por pares. Ainda assim, algumas iniciativas relevantes merecem análise detalhada.
+
+\subsection*{Ferramentas Baseadas em LLM para Extração Web}
+
+O ScrapeGraphAI é uma biblioteca Python de código aberto que implementa pipelines de scraping orientados por LLMs \cite{ScrapeGraphAI2024}. O sistema permite ao desenvolvedor descrever, em linguagem natural, quais informações devem ser extraídas de uma ou mais URLs, e internamente constrói um grafo de execução que combina etapas de \textit{fetch}, limpeza e extração via LLM. A abordagem é conceitualmente similar à adotada no Crawler AI, diferenciando-se pela abstração de grafo de execução e pelo suporte nativo a múltiplos provedores de modelos, incluindo modelos locais executados via Ollama.
+
+O Firecrawl é um serviço de API comercial que converte páginas web em texto limpo ou dados estruturados adequados para consumo por LLMs \cite{Firecrawl2024}. O serviço cuida das etapas de \textit{fetch} e limpeza, entregando o conteúdo em formato Markdown ou JSON. Diferentemente de uma solução completa de scraping, o Firecrawl posiciona-se como uma camada de pré-processamento para pipelines que utilizam LLMs em etapas subsequentes, não realizando a extração estruturada por si só.
+
+O Jina AI Reader é uma ferramenta de conversão de páginas web para texto estruturado legível por modelos de linguagem, acessível via API HTTP \cite{JinaReader2024}. O serviço recebe uma URL e retorna o conteúdo da página em Markdown limpo, eliminando a necessidade de implementação das etapas de \textit{fetch} e limpeza pelo desenvolvedor. Assim como o Firecrawl, posiciona-se como infraestrutura de suporte a pipelines de extração, e não como um sistema completo.
+
+\subsection*{Estudos Acadêmicos}
+
+No âmbito acadêmico, o uso de LLMs para extração de informação estruturada tem sido explorado principalmente no contexto de documentos não web, como artigos científicos, relatórios e registros médicos. O trabalho de \citeauthor{Brown2020} demonstra a viabilidade do \textit{few-shot prompting} para tarefas de extração de entidades \cite{Brown2020}, mas sem foco específico em páginas HTML nem em comparação com abordagens tradicionais de scraping. A pesquisa de \citeauthor{Zhao2023} oferece uma revisão abrangente das capacidades dos LLMs em tarefas de PLN, incluindo extração de informação, porém trata o tema de forma genérica, sem avaliações empíricas sobre o contexto de web scraping \cite{Zhao2023}. As ferramentas apresentadas anteriormente, por sua vez, são documentadas por seus desenvolvedores sem metodologias formais de avaliação comparativa.
+
+\subsection*{Lacuna Identificada}
+
+A revisão da literatura evidencia uma lacuna relevante: não há, até o momento, estudos acadêmicos formais e revisados por pares que comparem sistematicamente a abordagem de scraping via LLM com a abordagem tradicional baseada em seletores CSS e XPath, utilizando metodologia de avaliação rigorosa com métricas objetivas e conjunto de dados controlado. As comparações disponíveis são produzidas pelos próprios desenvolvedores das ferramentas — sujeitas, portanto, a viés de confirmação — ou baseiam-se em experiências qualitativas relatadas em publicações técnicas não revisadas.
+
+O presente trabalho busca preencher essa lacuna ao implementar ambas as abordagens sobre os mesmos conjuntos de páginas web e avaliá-las com métricas objetivas — acurácia, cobertura, tempo de processamento, custo e taxa de falha — em cenários representativos de uso real, produzindo evidências empíricas que possam orientar decisões de engenharia de software em projetos que demandam extração automatizada de dados.
 
 % ============================================================
 \chapter{Metodologia}
