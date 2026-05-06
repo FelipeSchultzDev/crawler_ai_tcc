@@ -1,0 +1,251 @@
+\documentclass[tcc,capa]{texifsul}
+\setlength{\parindent}{2,96382876979577em}
+
+\setlength{\parindent}{2,96382876979577em}
+
+
+\usepackage[utf8]{inputenc} % acentuacao
+\usepackage{graphicx} % para inserir figuras
+\usepackage[T1]{fontenc}
+
+\usepackage{multirow}
+
+
+\hypersetup{
+    hidelinks, % Remove coloração e caixas
+    unicode=true,   %Permite acentuação no bookmark
+    linktoc=all %Habilita link no nome e página do sumário
+}
+
+\unidade{Câmpus Gravataí}
+
+%\nomecurso{Técnico em Informática para Internet} % comentar se for TCC do ADS
+\nomecurso{Superior de Tecnologia em Análise e Desenvolvimento de Sistemas} % comentar se for TCC do integrado
+
+%\titulocurso{Técnico em Informática para Internet} % comentar se for TCC do ADS
+\titulocurso{Tecnólogo em Análise e Desenvolvimento de Sistemas} % comentar se for TCC do integrado
+
+
+
+\unidadeeng{Campus Gravataí}
+
+
+\title{WATCHBOX - APLICAÇÃO DE GERENCIAMENTO DE LISTAS E RECOMENDAÇÕES DE AUDIOVISUAIS}
+
+\author{}{Felipe Machado Schultz}
+
+\advisor[Prof.~Titulação.]{}{Fernando Abraão Afonso}
+
+\banca[Prof.~Titulação.]{}{Nome membro da banca}
+
+\banca[Prof.~Titulação.]{}{Nome membro da banca}
+% caso seja professora usar: Prof\textsuperscript{a}.
+
+% Titulação usar:
+% Dr. - para professor com Doutorado
+% Dr\textsuperscript{a}. - para professora com Doutorado
+% Me - para professor com Mestrado
+% Ma - para professora com Mestrado
+% Esp - para professor com Especialização
+
+
+%Palavras-chave em PT_BR
+\keyword{Palavra 1}
+\keyword{Palavra 2}
+\keyword{Palavra 3}
+
+%Palavras-chave em EN_US
+\keywordeng{Keyword 1}
+\keywordeng{Keyword 2}
+\keywordeng{Keyword 3}
+
+\begin{document}
+
+%\renewcommand{\advisorname}{Orientadora}           %descomente caso tenhas orientadora
+%\renewcommand{\coadvisorname}{Coorientadora}      %descomente caso tenhas coorientadora
+
+\maketitle
+
+\sloppy
+
+%Composição da Banca Examinadora
+\begin{aprovacao}{25 de maio de 2022} %data da banca por extenso
+
+\end{aprovacao}
+
+%Opcional
+% \begin{agradecimentos}
+  % Agradeço\ldots 
+% \end{agradecimentos}
+
+%Opcional
+%\begin{epigrafe}
+%  Só sei que nada sei.\\
+%  {\sc --- Sócrates}
+%\end{epigrafe}
+
+%Resumo em Português (no máximo 500 palavras)
+% Fazer um resumo depois
+% \begin{abstract}
+% \noindent
+% O resumo é uma síntese, que apresenta de forma resumida o projeto como um todo. Convém que o resumo tenha entre 150 e 500 palavras.
+
+
+% \end{abstract}
+
+
+% \begin{englishabstract}
+% \noindent
+% \noindent
+% O abstract é uma síntese em inglês, que apresenta de forma resumida o projeto como um todo. Convém que o resumo tenha entre 150 e 500 palavras. 
+% \end{englishabstract}
+
+
+%Lista de Figuras
+\listoffigures
+
+%Lista de Tabelas
+\listoftables
+
+%lista de abreviaturas e siglas
+\begin{listofabbrv}{ABR1234}%coloque aqui a maior sigla para ajustar a distância
+% Aqui devem ser adicionadas todas as siglas que são usadas durante o texto
+%exemplo de siglas a serem utilizadas caso sejam usadas no texto
+        \item[API] Application Programming Interface
+        \item[HTTP] HyperText Transfer Protocol
+        \item[NoSQL] Not only SQL
+        \item[PL/SQL] Procedural Language/Structured Query Language
+        \item[SQL] Structured Query Language
+        
+\end{listofabbrv}
+
+%Sumario
+\tableofcontents
+
+\chapter{Introdução}
+
+Nos dias atuais, com a popularização e crescimento das plataformas de streaming, a quantidade de opções de filmes, séries e animes disponíveis vem se tornando cada vez maior, chegando em um aumento de cerca de 21\% entre os anos de 2021 a 2022 (NIELSEN, 2022). Nenhuma das plataformas de streaming possuem todos os conteúdos disponíveis em seu acervo, pois muitas delas possuem contratos de direitos autorais com exclusividade ou produções próprias, como a Netflix (NETFLIX, 2023), o que leva muitos usuários a recorrerem a mais de uma plataforma para expandir suas opções de entretenimento. No entanto, essa divisão entre diferentes plataformas pode criar um ponto de falha na geração de recomendações para o usuário. As recomendações são baseadas em algoritmos que analisam os dados contidos em cada plataforma. Como cada plataforma tem acesso apenas aos dados disponíveis em sua própria biblioteca, a recomendação pode ser limitada, não refletindo todas as preferências e interesses do usuário. Portanto, a falta de conteúdos unificados em uma única plataforma pode prejudicar a eficácia das recomendações, já que elas são dependentes dos dados específicos de cada plataforma.
+
+O problema que este trabalho busca resolver é a falta de uma plataforma que permita ao usuário ter um controle maior sobre os conteúdos que ele tem interesse, bem como acesso a recomendações personalizadas baseadas em seus gostos e preferências. Com o aumento da oferta de filmes, séries e animes nas plataformas de streaming, torna-se desafiador para os usuários encontrar e organizar os conteúdos de seu interesse.
+
+Diante desse contexto, surge a necessidade de uma ferramenta que facilite a busca, organização e recomendação desses conteúdos. O objetivo deste trabalho é desenvolver um sistema web que permita ao usuário criar suas próprias listas de filmes, séries e animes, bem como avaliá-los e comentá-los. Essa plataforma personalizada proporcionará aos usuários um maior controle sobre sua experiência de entretenimento, permitindo que eles organizem e gerenciem os conteúdos de acordo com suas preferências individuais.
+
+Além disso, o sistema irá utilizar técnicas de recomendação personalizada para sugerir novos filmes, séries e animes com base nos interesses e histórico de cada usuário. Isso garantirá que as recomendações sejam mais precisas e relevantes, levando em consideração as preferências individuais de cada usuário.
+
+No geral, esse sistema web busca preencher a lacuna existente nas plataformas de streaming, fornecendo aos usuários uma experiência mais personalizada, onde eles tenham controle sobre os conteúdos que desejam assistir e recebam recomendações que correspondam aos seus interesses específicos.
+
+A hipótese é que o sistema proposto irá resolver os problemas desses usuários ao oferecer uma ferramenta de busca e organização de conteúdos audiovisuais mais personalizada e eficiente, superando as limitações encontradas em outras plataformas existentes, proporcionando uma experiência mais satisfatória aos usuários. Através do desenvolvimento de recursos específicos, como a capacidade de criar listas personalizadas de filmes, séries e animes, avaliá-los e comentá-los. A validação dessa hipótese será realizada por meio da implementação e avaliação do sistema, considerando feedbacks e opiniões dos usuários sobre a sua usabilidade e eficácia.
+
+\chapter{Justificativa}
+A crescente oferta de plataformas de conteúdo audiovisual tem proporcionado aos usuários uma variedade de opções para desfrutar de filmes, séries e outros conteúdos. No entanto, é importante ressaltar que muitas dessas plataformas ainda enfrentam limitações significativas quando se trata da personalização da experiência do usuário. A criação de listas personalizadas, recomendações precisas e uma interação efetiva entre os usuários ainda são desafios a serem superados.
+
+Muitas vezes, as opções disponíveis para criação de listas nessas plataformas são limitadas, não permitindo que os usuários organizem e gerenciem seus conteúdos de forma flexível e personalizada. Além disso, as funções de classificação e revisão geralmente são limitadas e não podem fornecer aos usuários uma experiência interativa completa.
+
+Diante dessa realidade, torna-se evidente a necessidade de desenvolver uma solução que vá além das limitações existentes, oferecendo aos usuários uma plataforma que permita uma maior personalização, interação e participação ativa na experiência de entretenimento.
+
+Nesse contexto, o presente trabalho visa justamente atender a essa necessidade, desenvolvendo um sistema web que oferece aos usuários a possibilidade de criar suas próprias listas de conteúdos audiovisuais, receber recomendações personalizadas de acordo com seus gostos e preferências, além de disponibilizar poderosos recursos interativos e compartilhá-los com outros usuários. Para exemplificar melhor essas limitações, foi elaborado um comparativo entre o Watchbox, sistema proposto, com outras plataformas já existentes no mercado e apresentado na
+
+
+
+
+\chapter{Objetivos}
+É a parte do texto em que o autor explica quais soluções o projeto pretende apresentar. 
+
+\section{Objetivo Geral}
+
+
+\section{Objetivos Específicos}
+
+
+\chapter{REVISÃO DE LITERATURA }
+Na revisão de literatura deve-se ler o que já foi publicado sobre o assunto, refere-se ao levantamento do tema pesquisado. Abrange livros técnicos, artigos científicos, pontos de vista diversificados de autores, etc. O levantamento deve cobrir o assunto a ser pesquisado.
+
+\section{Seção 1}
+
+
+\chapter{Metologia}
+É nesse capítulo do texto em que se descreve, detalhadamente, como se deu a programação e a execução do projeto, quais as tecnologias utilizadas apresentando o motivo da escolha por essas tecnologias. Além disso são apresentadas as modelagens realizadas, por exemplo modelo de caso de uso e o modelo Entidade Relacionamento (ER).
+
+\section{Tecnologias}
+
+Aqui deve ser descrito todas as tecnologias utilizadas no trabalho. Organize a seção como achar melhor pode usar subseções, mostrando uma tecnologia em cada subseção por exemplo.
+
+Exemplo do uso de figuras:
+Todas as figuras devem ser centralizadas e devem possuir uma numeração e um título na parte superior da figura. Além disso, deve ser colocada a fonte da figura. Ao citar uma figura no texto use Figura número com o F em maiúsculo 
+
+Caso tenhas criado a figura colocar Fonte: elaborado pelo autor
+
+Caso tenhas feito o download de algum lugar colocar a citação para a referência: Leal, 2021
+
+A Figura \ref{figura1} apresenta um exemplo de figura com citação de quando o autor criou a figura.
+
+\begin{figure}[ht]
+  \caption{Exemplo de arquitetura 1}
+  \centering \includegraphics[width=0.7\textwidth]{imagens/figura1.png}
+  \label{figura1}
+  \caption*{Fonte: elaborado pelo autor}
+\end{figure}
+
+A Figura \ref{figura2} apresenta um exemplo de figura com citação de onde o autor pegou a figura
+\begin{figure}[ht]
+  \caption{Exemplo de arquitetura 2}
+  \centering \includegraphics[width=0.7\textwidth]{imagens/figura2.png}
+  \label{figura2}
+  \caption*{Fonte: \nocite{Leal:21} Leal, 2021.}
+\end{figure}
+
+
+\subsection{HTML}
+
+\subsection{CSS}
+
+
+\section{Modelo de Caso de Uso}
+Aqui apresentar o modelo de caso de uso criado
+
+\section{Modelo Entidade Relacionamento}
+
+Aqui apresentar o modelo ER criado, explicando a ideia da modelagem do banco de dados criado.
+
+\chapter{AVALIAÇÃO E DISCUSSÃO SOBRE OS RESULTADOS}
+
+Nesse Capítulo deve ser mostrado o que foi desenvolvido, mostre as telas que foram criadas, procure mostrar tudo o que foi implementado e estará à disposição para o usuário utilizar.
+
+Além das telas implementadas, caso tenha sido realizado uma validação do trabalho desenvolvido crie uma nova seção aqui dentro desse capítulo para explicar como foi realizada a validação do trabalho.
+
+\chapter{Conclusões}
+
+Realiza uma reflexão sobre a execução do trabalho, seus resultados e eventuais validações, explorando suas potencialidades. Além disso, aborda trabalhos futuros que podem ser derivados do projeto. 
+
+% Bibliografia http://liinwww.ira.uka.de/bibliography/index.html um
+% site que cataloga no formato bibtex a bibliografia em computacao
+% \bibliography{nomedoarquivo.bib} (sem extensao)
+% \bibliographystyle{formato.bst} (sem extensao)
+
+\bibliographystyle{abnt}
+\bibliography{bibliografia} 
+
+% Apêndices (Opcional) - Material produzido pelo autor
+\apendices
+\chapter{Título do Apêndice}
+
+Material suplementar necessário para esclarecimentos de pontos que não puderam ser debatidos no corpo do texto do projeto. Formulários de entrevistas, possíveis materiais de pesquisa e prospecção, fotografias que não sejam diretamente ligadas ao desenvolvimento do projeto e à aplicação de tecnologias podem vir logo após o texto e seguindo sua paginação. 
+
+\textbf{É opcional. }
+
+Anexos são materiais externos, enquanto apêndice é material produzido pelo próprio autor. 
+
+% Anexos (Opcional) - Material produzido por outro
+\anexos
+\chapter{Título do Anexo}
+
+Material suplementar necessário para esclarecimentos de pontos que não puderam ser debatidos no corpo do texto do projeto. Formulários de entrevistas, possíveis materiais de pesquisa e prospecção, fotografias que não sejam diretamente ligadas ao desenvolvimento do projeto e à aplicação de tecnologias podem vir logo após o texto e seguindo sua paginação. 
+
+\textbf{É opcional. }
+
+Anexos são materiais externos, enquanto apêndice é material produzido pelo próprio autor. 
+
+
+
+\end{document}
+
