@@ -367,29 +367,83 @@ A chamada à API utiliza o parâmetro \texttt{response\_format: \{type: "json\_o
 
 \section{Tecnologias Utilizadas}
 
-% TODO: Criar tabela com as tecnologias divididas por camada (Frontend, Worker, Infraestrutura).
-% Incluir: React, TanStack Start, Bun, Python, BeautifulSoup, Playwright, OpenAI SDK,
-% RabbitMQ, PostgreSQL, Drizzle ORM, Docker, Better Auth.
+A Tabela~\ref{tab:tecnologias} apresenta as principais tecnologias utilizadas no sistema Crawler AI, organizadas por camada de responsabilidade.
+
+\begin{table}[htbp]
+\centering
+\caption{Tecnologias utilizadas no sistema Crawler AI por camada}
+\label{tab:tecnologias}
+\begin{tabular}{llp{7cm}}
+\hline
+\textbf{Tecnologia} & \textbf{Camada} & \textbf{Finalidade} \\
+\hline
+React 19            & Frontend        & Biblioteca de construção de componentes de interface \\
+TanStack Start      & Frontend        & Framework \textit{full-stack} com SSR via Nitro \\
+TanStack Router     & Frontend        & Roteamento baseado em arquivos \\
+TanStack Query      & Frontend        & Gerenciamento de estado assíncrono e cache de dados \\
+Better Auth         & Frontend        & Autenticação de usuários com sessões em banco de dados \\
+Drizzle ORM         & Frontend        & Mapeamento objeto-relacional para PostgreSQL \\
+Bun                 & Frontend        & Runtime JavaScript e gerenciador de pacotes \\
+\hline
+Python 3.12         & Worker          & Linguagem de implementação do worker de extração \\
+BeautifulSoup 4     & Worker          & Parsing e limpeza de HTML \\
+lxml                & Worker          & Parser HTML de alta performance (backend do BeautifulSoup) \\
+Playwright          & Worker          & Automação de navegador para páginas com conteúdo dinâmico \\
+requests            & Worker          & Requisições HTTP diretas \\
+OpenAI SDK          & Worker          & Cliente oficial da API de modelos de linguagem da OpenAI \\
+aio-pika            & Worker          & Cliente assíncrono para comunicação com o RabbitMQ \\
+\hline
+RabbitMQ            & Infraestrutura  & Broker de mensagens baseado no protocolo AMQP \\
+PostgreSQL          & Infraestrutura  & Banco de dados relacional para persistência de dados \\
+Docker Compose      & Infraestrutura  & Orquestração e provisionamento dos contêineres do sistema \\
+\hline
+\end{tabular}
+\end{table}
 
 \section{Abordagem Tradicional: Módulo \textit{Baseline}}
 
-% TODO: Descrever a implementação do módulo de scraping tradicional que será usado para comparação.
-% Cobrir:
-% - Estrutura do módulo (BeautifulSoup + seletores manuais)
-% - Como os seletores foram definidos para cada cenário de teste
-% - Critério para definição dos seletores (inspeção manual do DOM)
-% - Diferenças de implementação em relação ao módulo LLM
+Para viabilizar a comparação empírica entre as abordagens, foi implementado um módulo de scraping tradicional que serve como \textit{baseline}. Esse módulo realiza a extração dos mesmos campos de dados que o pipeline LLM, porém por meio de seletores CSS e expressões XPath construídos manualmente para cada cenário de teste, utilizando a biblioteca BeautifulSoup com o parser \texttt{lxml}.
+
+\subsection*{Estrutura do Módulo}
+
+O módulo \textit{baseline} compartilha o estágio de \textit{fetch} com o pipeline LLM — ou seja, utiliza a mesma lógica de dois níveis (requisição HTTP direta com fallback para Playwright) para obter o HTML bruto da página. Essa decisão garante que eventuais diferenças nos resultados de extração reflitam exclusivamente a lógica de extração e não variações na obtenção do conteúdo.
+
+A partir do HTML obtido, o módulo aplica diretamente os seletores predefinidos sem realizar limpeza de conteúdo, uma vez que os seletores apontam para elementos específicos da árvore DOM e não dependem de um texto limpo intermediário. A saída é um dicionário Python com os mesmos campos definidos no esquema de extração do cenário, permitindo comparação direta entre os resultados de ambas as abordagens.
+
+\subsection*{Definição dos Seletores}
+
+Para cada URL incluída nos experimentos, os seletores CSS foram determinados por inspeção manual do DOM da página utilizando as ferramentas de desenvolvedor do navegador Chrome. O processo de definição seguiu os seguintes critérios:
+
+\begin{enumerate}
+    \item Identificação do elemento HTML que contém o dado desejado na renderização visual da página;
+    \item Verificação de estabilidade do seletor: preferência por atributos semânticos (\texttt{id}, \texttt{name}, atributos \texttt{data-*} específicos) em detrimento de classes CSS utilitárias, que tendem a ser mais voláteis;
+    \item Validação do seletor contra ao menos três carregamentos distintos da página para confirmar consistência;
+    \item Documentação do seletor e do campo ao qual se refere em arquivo de configuração por cenário.
+\end{enumerate}
+
+Caso um campo não possa ser extraído diretamente por um seletor simples — por exemplo, quando o dado está embutido em texto corrido —, aplica-se uma expressão regular sobre o conteúdo textual do elemento pai.
+
+\subsection*{Diferenças em Relação ao Pipeline LLM}
+
+As principais diferenças operacionais entre o módulo \textit{baseline} e o pipeline LLM estão sintetizadas a seguir. O módulo tradicional não realiza chamadas a APIs externas, tem custo de execução nulo além da infraestrutura local e apresenta tempo de resposta determinado exclusivamente pelo \textit{fetch}. Em contrapartida, exige a definição manual de seletores para cada novo site — etapa que demanda conhecimento da estrutura do HTML alvo — e falha silenciosamente quando a estrutura da página é alterada. O pipeline LLM, por outro lado, não requer configuração por site, mas incorre em custo de API e latência adicional a cada extração.
 
 \section{Metodologia de Comparação}
 
 \subsection{Cenários de Teste}
 
-% TODO: Descrever os cenários de teste selecionados.
-% Proposta de categorias:
-% 1. Páginas de produto em e-commerce (preço, título, descrição, disponibilidade)
-% 2. Artigos de portal de notícias (título, autor, data, corpo do texto)
-% 3. Páginas com dados tabulares (tabelas de dados, rankings)
-% Definir o número de URLs por categoria e critérios de seleção.
+Os experimentos foram organizados em três categorias de cenários, cada uma representando um tipo de caso de uso recorrente em aplicações reais de web scraping. Para cada categoria foram selecionadas cinco URLs, totalizando quinze páginas avaliadas. A seleção buscou contemplar variações relevantes dentro de cada categoria — como diferentes layouts, presença ou ausência de conteúdo dinâmico e distintos graus de complexidade estrutural —, evitando que os resultados reflitam as características de um único site.
+
+\subsubsection*{Categoria A — Páginas de Produto em E-commerce}
+
+Neste cenário, o objetivo é extrair as informações essenciais de páginas de produto de lojas virtuais. Os campos do esquema de extração são: nome do produto, preço atual, preço original (quando há desconto), disponibilidade em estoque e avaliação média dos consumidores. Esse cenário é representativo de aplicações de monitoramento de preços e comparação de ofertas, e apresenta como desafio específico a presença frequente de conteúdo dinâmico — preços e disponibilidade são frequentemente renderizados via JavaScript — e a alta variação de layout entre diferentes lojas.
+
+\subsubsection*{Categoria B — Artigos de Portais de Notícias}
+
+Neste cenário, o objetivo é extrair os metadados e o conteúdo principal de artigos publicados em portais jornalísticos. Os campos do esquema de extração são: título do artigo, nome do autor, data de publicação, nome do veículo e resumo ou primeiro parágrafo do corpo do texto. Esse cenário é representativo de aplicações de agregação de notícias e monitoramento de mídia, e apresenta como desafio a diversidade de estruturas de markup adotadas pelos portais para marcar autoria e data, bem como a presença de elementos de navegação e publicidade que podem confundir extratores baseados em contexto.
+
+\subsubsection*{Categoria C — Páginas com Dados Tabulares}
+
+Neste cenário, o objetivo é extrair dados organizados em tabelas ou listas estruturadas, como rankings e classificações. Os campos do esquema de extração variam conforme a página, mas seguem o padrão de uma lista de itens, cada um com posição, nome e um ou mais atributos numéricos associados. Esse cenário é representativo de aplicações de coleta de dados para análise, e apresenta como desafio a variação na implementação de tabelas — algumas construídas com elementos HTML nativos (\texttt{<table>}), outras com \textit{grids} CSS ou listas customizadas — e a eventual paginação dos dados.
 
 \subsection{Métricas de Avaliação}
 
